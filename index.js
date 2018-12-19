@@ -34,7 +34,7 @@ server.get("/users", (req, res) => {
     });
 });
 
-// get user and reviews
+// get user and reviews.
 server.get("/users/:email", (req, res) => {
   const { email } = req.params;
   db("users")
