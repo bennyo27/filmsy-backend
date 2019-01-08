@@ -66,7 +66,6 @@ server.get("/users/:email/movie/:id", (req, res) => {
           user = user[0];
           user.reviews = reviews;
           // res.status(200).json({ project, actions });
-          console.log(user);
           res.status(200).json(user);
         })
         .catch(err => {
@@ -90,7 +89,6 @@ server.get("/reviews/:id", (req, res) => {
   db("reviews")
     .where({ movie_id: id })
     .then(reviews => {
-      console.log(reviews);
       let story_average = 0;
       let audio_average = 0;
       let visuals_average = 0;
@@ -117,12 +115,6 @@ server.get("/reviews/:id", (req, res) => {
           characters_average +
           dialogue_average) /
         5;
-      console.log(story_average);
-      console.log(audio_average);
-      console.log(visuals_average);
-      console.log(characters_average);
-      console.log(dialogue_average);
-      console.log(final_score);
       let results = {
         story_average,
         audio_average,
