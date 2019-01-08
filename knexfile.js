@@ -2,7 +2,7 @@
 require('dotenv').config
 const localPg = {
   host: "localhost",
-  database: 'db'
+  database: process.env.DB
 }
 
 const dbConnection = process.env.DATABASE_URL || localPg;
