@@ -2,7 +2,7 @@ exports.up = function(knex, Promise) {
   return knex.schema.createTable("reviews", tbl => {
     tbl.increments().unique();
     tbl
-      .integer("user_email")
+      .string("user_email")
       .references("email")
       .inTable("users")
       .notNullable();
