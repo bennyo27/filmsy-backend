@@ -22,6 +22,7 @@ module.exports = {
     }
   },
 
+  // production
   production: {
     client: "pg",
     connection: dbConnection,
