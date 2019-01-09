@@ -1,21 +1,20 @@
 const db = require("../data/dataConfig");
 
 // exports
-modeule.exports = server => {
+module.exports = server => {
     server.post("/users", postUser);
     server.get("/users", getUsers);
     server.get("/users/:email", getUser);
     server.get("/users/:email/movie/:id", getUserMovie);
     server.get("/reviews", getReviews);
-    server.post("/users", postUser);
     server.get("/reviews/:id", getMovieReviews);
     server.post("/reviews", postReview);
-    server.put("/users/:email/movie/:id", getMovieReviews);
+    server.put("/users/:email/movie/:id", putMovieReview);
 }
 
 
 // post user
-server.post("/users", (req, res) => {
+function postUser(req, res) {
     const user = req.body;
     db("users")
       .insert(user)
@@ -27,19 +26,19 @@ server.post("/users", (req, res) => {
           res.status(200).json("User already exists");
         }
       });
-  });
+  };
   
   // get users
-  server.get("/users", (req, res) => {
+  function getUsers(req, res) {
     db("users")
       .then(users => res.status(200).json(users))
       .catch(err => {
         res.status(500).json(err);
       });
-  });
+  };
   
   // get user and reviews.
-  server.get("/users/:email", (req, res) => {
+  function getUser(req, res) {
     const { email } = req.params;
     db("users")
       .where({ email })
@@ -56,10 +55,10 @@ server.post("/users", (req, res) => {
             res.status(500).json({ error: "Data could not be retrieved" });
           });
       });
-  });
+  };
   
   // get user and review for specific movie
-  server.get("/users/:email/movie/:id", (req, res) => {
+  function getUserMovie(req, res) {
     const { email, id } = req.params;
     db("users")
       .where({ email })
@@ -76,19 +75,19 @@ server.post("/users", (req, res) => {
             res.status(500).json({ error: "Data could not be retrieved" });
           });
       });
-  });
+  };
   
   // get reviews
-  server.get("/reviews", (req, res) => {
+  function getReviews(req, res) {
     db("reviews")
       .then(reviews => res.status(200).json(reviews))
       .catch(err => {
         res.status(500).json(err);
       });
-  });
+  };
   
   //get reviews for specific movie
-  server.get("/reviews/:id", (req, res) => {
+  function getMovieReviews(req, res) {
     const { id } = req.params;
     db("reviews")
       .where({ movie_id: id })
@@ -132,10 +131,10 @@ server.post("/users", (req, res) => {
       .catch(err => {
         res.status(500).json(err);
       });
-  });
+  };
   
   // post review
-  server.post("/reviews", (req, res) => {
+  function postReview(req, res) {
     const review = req.body;
     db("reviews")
       .insert({
@@ -147,10 +146,10 @@ server.post("/users", (req, res) => {
         res.status(201).json(ids[0]);
       })
       .catch(err => res.status(500).json(err));
-  });
+  };
   
   // put review
-  server.put("/users/:email/movie/:id", (req, res) => {
+  function putMovieReview(req, res) {
     const { email, id } = req.params;
     const changes = req.body;
     db("reviews")
@@ -160,4 +159,4 @@ server.post("/users", (req, res) => {
         res.status(200).json(count);
       })
       .catch(err => res.status(500).json(err));
-  });
+  };
