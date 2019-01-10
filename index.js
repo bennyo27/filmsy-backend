@@ -19,9 +19,7 @@ server.post("/users", (req, res) => {
       res.status(201).json(ids[0]);
     })
     .catch(err => {
-      if (err.errno === 19) {
-        res.status(200).json("User already exists");
-      }
+      res.status(500).json(err);
     });
 });
 
