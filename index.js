@@ -1,10 +1,8 @@
 // imports
 const express = require("express");
 var cors = require("cors");
-// knex
-const knex = require("knex");
-const knexConfig = require("./knexfile");
-const db = knex(knexConfig.development);
+// db
+const db = require("./data/dataConfig");
 // instantiate server
 const server = express();
 server.use(express.json());

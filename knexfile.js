@@ -1,5 +1,10 @@
 // Update with your config settings.
-require('dotenv').config
+require("dotenv").config;
+const localPg = {
+  host: "localhost",
+  database: process.env.DB_NAME
+};
+const dbConnection = process.env.DATABASE_URL || localPg;
 
 module.exports = {
   development: {
@@ -18,7 +23,7 @@ module.exports = {
 
   production: {
     client: "pg",
-    connection: process.env.DATABASE_URL,
+    connection: dbConnection,
     pool: {
       min: 2,
       max: 10
