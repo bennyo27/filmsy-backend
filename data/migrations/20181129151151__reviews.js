@@ -7,7 +7,11 @@ exports.up = function(knex, Promise) {
       .inTable("users")
       .notNullable();
     tbl.integer("movie_id").notNullable();
-    tbl.json("user_reviews").notNullable();
+    tbl.integer("story");
+    tbl.integer("audio");
+    tbl.integer("visuals");
+    tbl.integer("characters");
+    tbl.integer("dialogue");
   });
 };
 

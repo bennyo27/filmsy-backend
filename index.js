@@ -14,7 +14,11 @@ server.use(cors());
 server.post("/users", (req, res) => {
   const user = req.body;
   db("users")
-    .insert(user)
+    .insert({
+      username: user.lockUsername,
+      email: user.lockEmail,
+      email_verified: user.lockEmail_verified
+    })
     .then(ids => {
       res.status(201).json(ids[0]);
     })
@@ -32,43 +36,41 @@ server.get("/users", (req, res) => {
     });
 });
 
-// get user and reviews.
+// get user
 server.get("/users/:email", (req, res) => {
   const { email } = req.params;
   db("users")
     .where({ email })
-    .then(user => {
-      db("reviews")
-        .where({ user_email: email })
-        .then(reviews => {
-          user = user[0];
-          user.reviews = reviews;
-          // res.status(200).json({ project, actions });
-          res.status(200).json(user);
-        })
-        .catch(err => {
-          res.status(500).json({ error: "Data could not be retrieved" });
-        });
+    .then(results => {
+      if (results.length == 0) {
+        res.status(404).json("User does not exist.");
+      } else {
+        res.status(200).json(results[0]);
+      }
+    })
+    .catch(err => res.status(500).json(err));
+});
+
+// get all specific user reviews
+server.get("/users/:email/reviews", (req, res) => {
+  const { email } = req.params;
+  db("reviews")
+    .where({ user_email: email })
+    .then(results => {
+      res.status(200).json(results);
     });
 });
 
-// get user and review for specific movie
+// get review for specific movie from specific user
 server.get("/users/:email/movie/:id", (req, res) => {
   const { email, id } = req.params;
-  db("users")
-    .where({ email })
-    .then(user => {
-      db("reviews")
-        .where({ user_email: email, movie_id: id })
-        .then(reviews => {
-          user = user[0];
-          user.reviews = reviews;
-          // res.status(200).json({ project, actions });
-          res.status(200).json(user);
-        })
-        .catch(err => {
-          res.status(500).json({ error: "Data could not be retrieved" });
-        });
+  db("reviews")
+    .where({ user_email: email, movie_id: id })
+    .then(reviews => {
+      res.status(200).json(reviews[0]);
+    })
+    .catch(err => {
+      res.status(500).json({ error: "Data could not be retrieved" });
     });
 });
 
@@ -94,7 +96,7 @@ server.get("/reviews/:id", (req, res) => {
       let dialogue_average = 0;
       let final_score = 0;
       for (let i = 0; i < reviews.length; i++) {
-        user_reviews = JSON.parse(reviews[i].user_reviews);
+        user_reviews = reviews[i];
         story_average += user_reviews.story;
         audio_average += user_reviews.audio;
         visuals_average += user_reviews.visuals;
@@ -135,12 +137,18 @@ server.post("/reviews", (req, res) => {
     .insert({
       user_email: review.user_email,
       movie_id: review.movie_id,
-      user_reviews: JSON.stringify(review.user_reviews)
+      story: review.story,
+      audio: review.audio,
+      visuals: review.visuals,
+      characters: review.characters,
+      dialogue: review.dialogue
     })
     .then(ids => {
       res.status(201).json(ids[0]);
     })
-    .catch(err => res.status(500).json(err));
+    .catch(err => {
+      res.status(500).json(err);
+    });
 });
 
 // put review
@@ -149,7 +157,13 @@ server.put("/users/:email/movie/:id", (req, res) => {
   const changes = req.body;
   db("reviews")
     .where({ user_email: email, movie_id: id })
-    .update({ user_reviews: JSON.stringify(changes) })
+    .update({
+      story: changes.story,
+      audio: changes.audio,
+      visuals: changes.visuals,
+      characters: changes.characters,
+      dialogue: changes.dialogue
+    })
     .then(count => {
       res.status(200).json(count);
     })
